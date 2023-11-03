@@ -2,8 +2,6 @@ import express from "express";
 import noteRouter from "./routes/noteRoutes";
 import { testConnection } from "./config/sqlConfig";
 
-
-
 const app = express();
 
 app.use(express.json());
