@@ -7,8 +7,9 @@ import {
 
 const noterouter: Router = Router();
 
-noterouter.get("/", TestingRoute);
 noterouter.get("/all", getNotes);
 noterouter.post("/", addNote);
+noterouter.get("/", TestingRoute);
+
 
 export default noterouter;

@@ -5,6 +5,3 @@ GET http://localhost:4000/note
 
 ###
 GET http://localhost:4000/note/id
-
-###
-DELETE   http://localhost:4000/note/id
