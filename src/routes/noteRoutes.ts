@@ -1,13 +1,14 @@
 import { Router, Request, Response } from "express";
 import {
-
-getNotes,
-addNote
+  addNote,
+  getNotes,
+  TestingRoute,
 } from "../controllers/noteController";
 
 const noterouter: Router = Router();
 
-noterouter.get("/", getNotes);
+noterouter.get("/", TestingRoute);
+noterouter.get("/all", getNotes);
 noterouter.post("/", addNote);
 
 export default noterouter;

@@ -1,33 +1,51 @@
-import * as mssql from "mssql";
-import {sqlConfig} from "../config/sqlConfig";;
+import mssql from "mssql";
+import { sqlConfig } from "../config/sqlConfig";
 
-class Connection {
-  pool: mssql.ConnectionPool | undefined;
+export default class Connection {
+  private pool: Promise<mssql.ConnectionPool>;
+
   constructor() {
-    this.connectToDb();
+    this.pool = this.getConnection();
   }
-  connectToDb = async () => {
-    try {
-      this.pool = await mssql.connect(sqlConfig);
-    } catch (error) {
-    }
-  };
-  createrequestObj = (requestObj: mssql.Request, data: any) => {
-    let keyNames = Object.keys(data);
-    keyNames.map((name) => {
-      let value = data[name];
-      requestObj.input(name, value);
-    });
-    return requestObj;
-  };
-  executeRequest = async (storedProcedure: string, data: any = {}) => {
-    if (!this.pool) {
-      throw new Error("Connection pool not initialized");
-    }
-    const requestObj = await this.pool.request();
-    const results = await this.createrequestObj(requestObj, data);
-    return await results.execute(storedProcedure);
-  };
-}
 
-export const exec = new Connection().executeRequest;
+  async getConnection(): Promise<mssql.ConnectionPool> {
+    const pool = mssql.connect(sqlConfig) as Promise<mssql.ConnectionPool>;
+
+    return pool;
+  }
+
+  createRequest(
+    request: mssql.Request,
+    data: { [c: string | number]: string | number }
+  ) {
+    const keys = Object.keys(data);
+
+    keys.map((keyName) => {
+      const keyValue = data[keyName];
+      request.input(keyName, keyValue);
+    });
+
+    return request;
+  }
+
+  async query(query: string) {
+    const results = (await this.pool).request().query(query);
+
+    return results;
+  }
+
+  async execute(
+    procedureName: string,
+    data: { [c: string | number]: string | number } = {}
+  ) {
+    let pool = await this.pool;
+
+    let request = (await pool.request()) as mssql.Request;
+
+    request = this.createRequest(request, data);
+
+    const result = await request.execute(procedureName);
+
+    return result;
+  }
+}

@@ -1,37 +1,48 @@
-import { Request, Response } from "express";
-import { notes } from "../data";
-import { Note } from "../types/interface";
-import mssql from "mssql"
+import { Response, Request } from "express";
 import { sqlConfig } from "../config/sqlConfig";
+import mssql from "mssql";
+import { v4 } from "uuid";
+import connection from "../database helpers/dbConnect";
+
+export function TestingRoute(req: Request, res: Response) {
+  return res.send("Server Running well");
+}
 
 export const getNotes = async (req: Request, res: Response) => {
   try {
     const pool = await mssql.connect(sqlConfig);
-    const result = await pool.request().query(`SELECT * FROM Notess`);
-    res.json(result.recordset);
+
+    let notes = (await pool.request().execute("fetchAllNotes")).recordset;
+
+    return res.status(200).json({
+      notes: notes,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching notes from the database" });
+    return res.json({
+      error: error,
+    });
   }
 };
 
+export const addNote = async (req: Request, res: Response) => {
+  try {
+    let { title, description, note } = req.body;
 
-  export async function addNote(req: Request, res: Response) {
-    let { title, description, content } = req.body;
-    let query = `INSERT INTO notes (note_id, title, content) VALUES ('${id}', '${title}', '${content}')`;
+    let note_id = v4();
 
-    mssql
-      .connect(sqlConfig)
-      .then((pool) => {
-        return pool.request().query(query);
-      })
-      .then((result) => {
-        console.log("success", result);
-      })
-      .catch((err) => {
-        console.log(err);
+    let result = connection.arguments("addNote", {
+      note_id,
+      title,
+      description,
+      note,
+    });
 
-        return res.status(500).json({
-          error: err.message || "An error occurred while registering the note.",
-        });
-      });
+    return res.status(200).json({
+      message: "Note added",
+    });
+  } catch (error) {
+    return res.json({
+      error: error,
+    });
   }
+};
