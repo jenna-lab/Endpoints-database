@@ -4,3 +4,4 @@ CREATE TABLE NOTES (
     noteContent VARCHAR(200),
     created_at DATETIME DEFAULT GETDATE(),
 )
+
