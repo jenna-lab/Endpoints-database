@@ -1,0 +1,14 @@
+###CREATE NOTE
+POST http://localhost:4000/note
+Content-Type: application/json
+
+{
+    "title":"Recite Quran",
+    "content":"I will recite quran for eight hours tommorrow"
+}
+
+
+###GET ALL NOTES
+GET http://localhost:4000/note/all
+
+
