@@ -7,20 +7,17 @@ import { noteSchema } from "../validators/noteValidators";
 const dbhelpers = new connection();
 
 export function TestingRoute(req: Request, res: Response) {
-  // console.log("sdasd");
   
   return res.send("x Running");
 }
 
 export const getNotes = async (req: Request, res: Response) => {
-  // console.log("sdfghjhkdfghjk");
   
   try {
     const pool = await mssql.connect(sqlConfig);
 
     let notes = (await pool.request().execute("getNotesProc")).recordset;
 
-    // console.log(notes);
     
     return res.status(200).json(
       notes,

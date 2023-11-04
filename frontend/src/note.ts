@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const displayNotes = async () => {
     const notes = await getData("http://localhost:4000/note/all");
     console.log(notes);
-    // localStorage.setItem("notes", JSON.stringify(notes));
     noteslist.innerHTML = "";
     notes.forEach((note: any) => {
       const noteElement = document.createElement("div");
